@@ -34,6 +34,9 @@ tfenv install
 tfenv install 1.1.3
 ```
 
+Create a file __.terraform-version__ so that tfenv automatically detects the version of terraform. [Documentation](https://github.com/tfutils/tfenv#terraform-version).
+
+
 ### Azure CLI
 
 Follow the instructions on [Microsoft docs](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt).
