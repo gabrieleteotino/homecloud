@@ -44,3 +44,5 @@ moved {
 
 On the next terraform plan and terraform apply the state will be moved into the module.
 **Double check** terraform plan, no resource will need any change, only state.
+
+When the state move is finished the __moved__ instructions could be removed. If there are other users that could have used that module it is better to leave them there.
