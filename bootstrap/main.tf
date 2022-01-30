@@ -15,6 +15,11 @@ resource "azurerm_resource_group" "rg_bootstrap" {
 module "storage" {
   source               = "./storage"
   location             = local.location
-  storage_account_name = module.naming.storage_account.name_unique
   resource_group_name  = azurerm_resource_group.rg_bootstrap.name
+  storage_account_name = module.naming.storage_account.name_unique
+}
+
+module "keyvault" {
+  source              = "./keyvault"
+  resource_group_name = azurerm_resource_group.rg_bootstrap.name
 }
