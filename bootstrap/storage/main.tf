@@ -1,7 +1,11 @@
+data "azurerm_resource_group" "rg_bootstrap" {
+  name = var.resource_group_name
+}
+
 resource "azurerm_storage_account" "st_bootstrap" {
   name                      = var.storage_account_name
-  location                  = var.location
-  resource_group_name       = var.resource_group_name
+  location                  = data.azurerm_resource_group.rg_bootstrap.location
+  resource_group_name       = data.azurerm_resource_group.rg_bootstrap.name
   account_kind              = "StorageV2"
   account_tier              = "Standard"
   account_replication_type  = "GRS"

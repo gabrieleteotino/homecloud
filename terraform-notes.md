@@ -46,3 +46,29 @@ On the next terraform plan and terraform apply the state will be moved into the 
 **Double check** terraform plan, no resource will need any change, only state.
 
 When the state move is finished the __moved__ instructions could be removed. If there are other users that could have used that module it is better to leave them there.
+
+## Move tfstate to remote
+
+After the initial bootstrap we want to store the tfstate inside the storage account created.
+
+To do this create a __backend_configuration.tfvars__ file with the following content
+
+```
+resource_group_name  = "rg-bootstrap"
+storage_account_name = "storage_account_name_from_terraform_output"
+container_name       = "tfstate"
+key                  = "bootstrap.tfstate"
+```
+
+Change the __backend__ from local to remote in __requirements.tf__
+
+```
+  # backend "local" {}
+  backend "azurerm" {}
+```
+
+Migrate the state
+
+```
+terraform init --migrate-state --backend-config=backend_configuration.tfvars
+```
