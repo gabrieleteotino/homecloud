@@ -60,7 +60,7 @@ container_name       = "tfstate"
 key                  = "bootstrap.tfstate"
 ```
 
-Change the __backend__ from local to remote in __requirements.tf__
+Change the __backend__ from local to remote in providers.tf__
 
 ```
   # backend "local" {}
