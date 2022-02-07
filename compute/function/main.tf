@@ -3,39 +3,15 @@ module "naming" {
   suffix = ["funz"]
 }
 
+data "azurerm_storage_account" "storage" {
+  name                = var.storage_account_name
+  resource_group_name = var.storage_account_resource_group_name
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = module.naming.resource_group.name
   location = var.location
 }
-
-resource "azurerm_storage_account" "st_funz" {
-  name                      = module.naming.storage_account.name_unique
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.rg.name
-  account_kind              = "StorageV2"
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  access_tier               = "Hot"
-  min_tls_version           = "TLS1_2"
-  shared_access_key_enabled = true
-  blob_properties {
-    versioning_enabled = true
-    delete_retention_policy {
-      days = 30
-    }
-    container_delete_retention_policy {
-      days = 30
-    }
-  }
-}
-
-resource "azurerm_management_lock" "st_lock" {
-  name       = "resource-st-funz-lock"
-  scope      = azurerm_storage_account.st_funz.id
-  lock_level = "CanNotDelete"
-  notes      = "Locked. This is a core component."
-}
-
 
 resource "azurerm_app_service_plan" "funz" {
   name                = module.naming.app_service_plan.name_unique
@@ -59,8 +35,8 @@ resource "azurerm_function_app" "funz" {
   location                   = var.location
   resource_group_name        = azurerm_resource_group.rg.name
   app_service_plan_id        = azurerm_app_service_plan.funz.id
-  storage_account_name       = azurerm_storage_account.st_funz.name
-  storage_account_access_key = azurerm_storage_account.st_funz.primary_access_key
+  storage_account_name       = data.azurerm_storage_account.storage.name
+  storage_account_access_key = data.azurerm_storage_account.storage.primary_access_key
   https_only                 = true
   version                    = "~4"
   app_settings = {

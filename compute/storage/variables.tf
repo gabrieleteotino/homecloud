@@ -11,13 +11,3 @@ variable "location" {
   type    = string
   default = "West Europe"
 }
-
-variable "storage_account_name" {
-  type     = string
-  nullable = false
-}
-
-variable "storage_account_resource_group_name" {
-  type     = string
-  nullable = false
-}
