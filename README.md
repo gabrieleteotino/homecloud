@@ -1,5 +1,9 @@
-# Homecloud bootstrap
-Bootstrap resources and manual steps for my home cloud.
+# Homecloud Core
+
+Deployments of base services of my personal infra
+
+1. Bootstrap: initial tfstate storage account and a keyvault
+2. Compute: Function App
 
 ## Prerequisites
 
