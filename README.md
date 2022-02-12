@@ -83,6 +83,12 @@ az account list
 
 Eventually set your default subscription if you have more than one linked to your account.
 
+To keep az up-to-date
+
+```
+az upgrade
+```
+
 ## Terraform commands
 
 ### Initialize terraform
