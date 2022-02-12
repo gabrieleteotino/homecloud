@@ -87,6 +87,18 @@ Eventually set your default subscription if you have more than one linked to you
 
 ### Initialize terraform
 
+#### Using script
+
+Set the script as executable and then launch the script
+
+```
+cd reponame/modulename/
+chmod +x ./generate-config.sh
+./generate-config.sh
+```
+
+#### Manual steps
+
 Create a file *service-bus/backend_configuration.tfvars* (do NOT commit) with the following content
 
 ```
@@ -118,6 +130,14 @@ terraform apply --var="variable_name=value"
 ```
 terraform plan --var-file="my.tfvars"
 terraform apply --var-file="my.tfvars"
+```
+
+
+### Backend variables
+
+```
+terraform plan --var-file="backend_configuration.tfvars"
+terraform apply --var-file="backend_configuration.tfvars"
 ```
 
 Note: do not include tfvars files in source countrol.
