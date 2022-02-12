@@ -1,18 +1,13 @@
-module "naming" {
-  source      = "github.com/Azure/terraform-azurerm-naming"
-  suffix      = ["secrets"]
-}
-
-data "azurerm_resource_group" "rg_bootstrap" {
-  name = var.resource_group_name
+data "azurerm_resource_group" "core" {
+  name = var.core_resource_group_name
 }
 
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_key_vault" "secrets" {
-  name                        = module.naming.key_vault.name_unique
-  location                    = data.azurerm_resource_group.rg_bootstrap.location
-  resource_group_name         = data.azurerm_resource_group.rg_bootstrap.name
+resource "azurerm_key_vault" "core" {
+  name                        = var.core_keyvault_name
+  location                    = data.azurerm_resource_group.core.location
+  resource_group_name         = data.azurerm_resource_group.core.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   purge_protection_enabled    = true
@@ -39,8 +34,8 @@ resource "azurerm_key_vault" "secrets" {
 }
 
 resource "azurerm_management_lock" "kv_lock" {
-  name       = "resource-kv-secrets-lock"
-  scope      = azurerm_key_vault.secrets.id
+  name       = "resource-kv-core-lock"
+  scope      = azurerm_key_vault.core.id
   lock_level = "CanNotDelete"
   notes      = "Locked because it's needed for multiple services"
 }

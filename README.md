@@ -119,7 +119,7 @@ Generate a __backend_configuration.tfvars__ and reinit terraform to migrate the 
 terraform init --migrate-state --backend-config=backend_configuration.tfvars
 ```
 
-#### Using script
+#### Script to generate tfvars
 
 Set the script as executable and then launch the script
 

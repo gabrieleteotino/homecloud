@@ -1,17 +1,11 @@
-module "naming" {
-  source = "github.com/Azure/terraform-azurerm-naming"
-  suffix = ["core"]
+data "azurerm_resource_group" "core" {
+  name = var.core_resource_group_name
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = module.naming.resource_group.name
-  location = var.location
-}
-
-resource "azurerm_storage_account" "storage" {
-  name                      = module.naming.storage_account.name_unique
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.rg.name
+resource "azurerm_storage_account" "core" {
+  name                      = var.core_storage_account_name
+  resource_group_name       = data.azurerm_resource_group.core.name
+  location                  = data.azurerm_resource_group.core.location
   account_kind              = "StorageV2"
   account_tier              = "Standard"
   account_replication_type  = "LRS"
@@ -31,7 +25,7 @@ resource "azurerm_storage_account" "storage" {
 
 resource "azurerm_management_lock" "st_lock" {
   name       = "resource-storage-lock"
-  scope      = azurerm_storage_account.storage.id
+  scope      = azurerm_storage_account.core.id
   lock_level = "CanNotDelete"
   notes      = "Locked. This is a core component."
 }
