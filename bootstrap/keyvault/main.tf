@@ -1,7 +1,6 @@
 module "naming" {
   source      = "github.com/Azure/terraform-azurerm-naming"
   suffix      = ["secrets"]
-  unique-seed = "xuk1pngj6h8mzkat1mwr2equqtcdyv0pobl3cu67d35dkx92wmtvfbp70deva"
 }
 
 data "azurerm_resource_group" "rg_bootstrap" {

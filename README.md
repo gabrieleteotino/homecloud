@@ -3,13 +3,10 @@
 Infrastructure for my personal cloud.
 
 Includes the following components
-
  
 1. Bootstrap: initial tfstate storage account and a keyvault
 2. Compute: Function App
-
 3. VPN - a digital ocean droplet with wireguard, all secrets are stored in keyvault
-
 
 ## Prerequisites
 
@@ -17,7 +14,7 @@ Includes the following components
 - Terraform
 - az
 
-### For the vpn module
+### Vpn module
 
 A DigitalOcean account.
 
@@ -92,6 +89,35 @@ az upgrade
 ## Terraform commands
 
 ### Initialize terraform
+
+#### First run
+
+On the first run change __bootstrap/providers.tf__ and uncomment the local provider
+
+```
+  backend "local" {}
+  # backend "azurerm" {}
+```
+
+Initialize and deploy
+
+```
+terraform init
+terraform apply
+```
+
+Change again __bootstrap/providers.tf__ and uncomment azurerm
+
+```
+  # backend "local" {}
+  backend "azurerm" {}
+```
+
+Generate a __backend_configuration.tfvars__ and reinit terraform to migrate the state
+
+```
+terraform init --migrate-state --backend-config=backend_configuration.tfvars
+```
 
 #### Using script
 

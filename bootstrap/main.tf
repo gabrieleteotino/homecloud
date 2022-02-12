@@ -16,9 +16,15 @@ module "storage" {
   source               = "./storage"
   resource_group_name  = azurerm_resource_group.rg_bootstrap.name
   storage_account_name = module.naming.storage_account.name_unique
+  depends_on = [
+    azurerm_resource_group.rg_bootstrap
+  ]
 }
 
 module "keyvault" {
   source              = "./keyvault"
   resource_group_name = azurerm_resource_group.rg_bootstrap.name
+  depends_on = [
+    azurerm_resource_group.rg_bootstrap
+  ]
 }
