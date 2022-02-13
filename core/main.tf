@@ -8,13 +8,13 @@ resource "azurerm_resource_group" "core" {
   location = var.location
 }
 
-module "keyvault" {
-  source                   = "./keyvault"
-  core_resource_group_name = azurerm_resource_group.core.name
-  core_keyvault_name       = module.naming.key_vault.name_unique
-  depends_on = [
-    azurerm_resource_group.core
-  ]
+data "azurerm_resources" "bootstrap_key_vault" {
+  resource_group_name = "rg-bootstrap"
+  type                = "Microsoft.KeyVault/vaults"
+}
+
+locals {
+  key_vault_id = data.azurerm_resources.bootstrap_key_vault.resources[0].id
 }
 
 module "storage" {
@@ -23,8 +23,7 @@ module "storage" {
   core_storage_account_name = module.naming.storage_account.name_unique
   #key_vault_id = data.azurerm_key_vault.secrets.id
   depends_on = [
-    azurerm_resource_group.core,
-    module.keyvault
+    azurerm_resource_group.core
   ]
 }
 
@@ -32,7 +31,7 @@ module "function" {
   source                    = "./function"
   core_resource_group_name  = azurerm_resource_group.core.name
   core_storage_account_name = module.naming.storage_account.name_unique
-  core_key_vault_id         = module.keyvault.id
+  bootstrap_key_vault_id    = local.key_vault_id
   depends_on = [
     azurerm_resource_group.core,
     module.storage
