@@ -113,18 +113,18 @@ data "template_file" "peer_config" {
   }
 }
 
-resource "azurerm_storage_container" "container" {
+resource "azurerm_storage_container" "configs" {
   name                  = "vpn-configs"
   storage_account_name  = var.storage_account_name
   container_access_type = "private"
 }
 
-resource "azurerm_storage_blob" "example" {
+resource "azurerm_storage_blob" "configs" {
   count = length(var.users)
 
   name                   = "user-${var.users[count.index]}.conf"
   storage_account_name   = var.storage_account_name
-  storage_container_name = azurerm_storage_container.container.name
+  storage_container_name = azurerm_storage_container.configs.name
   type                   = "Block"
   source_content         = sensitive(data.template_file.peer_config[count.index].rendered)
 }

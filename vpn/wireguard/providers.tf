@@ -16,7 +16,6 @@ terraform {
 
     wireguard = {
       source = "OJFord/wireguard"
-      #version = "0.2.1"
     }
   }
 }
