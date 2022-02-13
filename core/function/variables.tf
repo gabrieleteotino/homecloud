@@ -8,7 +8,7 @@ variable "core_resource_group_name" {
   nullable = false
 }
 
-variable "core_key_vault_id" {
+variable "bootstrap_key_vault_id" {
   type     = string
   nullable = false
 }
