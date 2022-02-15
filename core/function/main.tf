@@ -85,3 +85,10 @@ resource "azurerm_management_lock" "func_lock" {
   lock_level = "CanNotDelete"
   notes      = "Locked. This is a core component."
 }
+
+module "github-action" {
+  source             = "../modules/github-action"
+  repository         = "homecloud_function"
+  application_name   = "GitHub Action CI Homecloud Funz"
+  target_resource_id = azurerm_function_app.funz.id
+}

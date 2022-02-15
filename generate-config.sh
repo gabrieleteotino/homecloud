@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Retrieving configuration from Azure"
+echo "Finding Bootstrap Storage Account"
 resource_group_name="rg-bootstrap"
 storage_account_name=$(az storage account list --resource-group=$resource_group_name --query="[?starts_with(name,'stboot')].name | [0]" --output tsv)
-echo "Configuration downlad complete"
+echo "Search complete"
 echo
 
 for folder_name in "bootstrap" "compute" "vpn"

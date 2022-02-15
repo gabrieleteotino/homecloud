@@ -4,8 +4,10 @@ Infrastructure for my personal cloud.
 
 Includes the following components
  
-1. Bootstrap: initial tfstate storage account and a keyvault
-2. Compute: Function App
+1. Bootstrap: initial tfstate Storage Account and  Key Vault
+2. Core
+  1. Funz Function App + Funz Storage Account
+  2. Core Storage Account
 3. VPN - a digital ocean droplet with wireguard, all secrets are stored in keyvault
 
 ## Prerequisites
@@ -20,7 +22,7 @@ A DigitalOcean account.
 
 A PAT (personal access token) [guide](https://docs.digitalocean.com/reference/api/create-personal-access-token/)
 
-Save the DigitalOcean PAT in the secrets keyvault with the name **DigitalOceanPersonalAccessToken**.
+Save the DigitalOcean PAT in the core keyvault with the name **DigitalOceanPersonalAccessToken**.
 
 Optional but useful [doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/)
 
@@ -28,6 +30,14 @@ Optional but useful [doctl](https://docs.digitalocean.com/reference/doctl/how-to
 sudo snap install doctl
 doctl auth init
 ```
+
+### Github CI/CD
+
+Create a GitHub [Personal Access Token](https://github.com/settings/tokens).
+
+Give it a name, choose an appropriate expiration and set the permission **public_repo**.
+
+Save the token in keyvault with the name **GitHubPersonalAccessToken**.
 
 ## Installation
 

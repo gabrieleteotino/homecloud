@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Retrieving configuration from Azure"
+echo "Finding Bootstrap Key Vault"
 resource_group_name="rg-bootstrap"
 keyvault_name=$(az keyvault list --resource-group=$resource_group_name --query="[?starts_with(name,'kv-secret')].name | [0]" --output tsv)
-echo "Configuration downlad complete"
+echo "Search complete"
 echo
 
 echo "Uploading secrets"

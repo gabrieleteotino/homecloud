@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "Retrieving configuration from Azure"
+echo "Finding Bootstrap Storage Account"
 resource_group_name="rg-bootstrap"
 storage_account_name=$(az storage account list --resource-group=$resource_group_name --query="[?starts_with(name,'stbootstrap')].name | [0]" --output tsv)
 connection_string=$(az storage account show-connection-string --resource-group $resource_group_name --name $storage_account_name --output tsv)
-echo "Configuration downlad complete"
+echo "Search complete"
 echo
 
 folder_name="tfstate_backup"
