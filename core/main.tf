@@ -3,13 +3,13 @@ module "naming" {
   suffix = ["core"]
 }
 
-data "azurerm_resources" "bootstrap_key_vault" {
+data "azurerm_resources" "bootstrap_key_vaults" {
   resource_group_name = "rg-bootstrap"
   type                = "Microsoft.KeyVault/vaults"
 }
 
 locals {
-  key_vault_id = data.azurerm_resources.bootstrap_key_vault.resources[0].id
+  key_vault_id = data.azurerm_resources.bootstrap_key_vaults.resources[0].id
 }
 
 resource "azurerm_resource_group" "core" {

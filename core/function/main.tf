@@ -16,6 +16,11 @@ data "azurerm_storage_account" "core" {
   resource_group_name = var.core_resource_group_name
 }
 
+data "azurerm_key_vault_secret" "dev_ops_pat_token" {
+  name         = "DevOpsPatForAzFunctions"
+  key_vault_id = var.bootstrap_key_vault_id
+}
+
 resource "azurerm_resource_group" "funz" {
   name     = module.naming.resource_group.name
   location = local.location
@@ -69,9 +74,13 @@ resource "azurerm_function_app" "funz" {
   storage_account_access_key = azurerm_storage_account.funz.primary_access_key
   https_only                 = true
   version                    = "~4"
+  identity {
+    type = "SystemAssigned"
+  }
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "dotnet",
     CoreStorageAccount       = data.azurerm_storage_account.core.name
+    DevOpsPat                = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.dev_ops_pat_token.id})"
   }
   site_config {
     always_on     = false
@@ -84,6 +93,23 @@ resource "azurerm_management_lock" "func_lock" {
   scope      = azurerm_function_app.funz.id
   lock_level = "CanNotDelete"
   notes      = "Locked. This is a core component."
+}
+
+# Workaround this will force the keyvault access policy to wait for the function app
+# to be updated before trying to read the identity.
+data "azurerm_function_app" "funz" {
+  name                = azurerm_function_app.funz.name
+  resource_group_name = azurerm_function_app.funz.resource_group_name
+}
+
+resource "azurerm_key_vault_access_policy" "funz" {
+  key_vault_id = var.bootstrap_key_vault_id
+  tenant_id    = data.azurerm_function_app.funz.identity.0.tenant_id
+  object_id    = data.azurerm_function_app.funz.identity.0.principal_id
+
+  secret_permissions = [
+    "Get",
+  ]
 }
 
 module "github-action" {

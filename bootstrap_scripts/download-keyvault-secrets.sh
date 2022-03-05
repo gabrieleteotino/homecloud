@@ -11,6 +11,7 @@ secret_list=$(az keyvault secret list --vault-name "$keyvault_name" --query="[].
 
 for secret_name in $(echo $secret_list | jq -c '.[]' | jq -r $sh)
 do
-    echo "Downloading secret ********"
+    # TODO check if file exist, move it, download, delete after
+    echo "Downloading secret $secret_name"
     az keyvault secret download --file "$secret_name.secret" --vault-name "$keyvault_name" -n "$secret_name"
 done
