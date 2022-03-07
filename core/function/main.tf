@@ -7,6 +7,11 @@ module "naming" {
   suffix = ["funz"]
 }
 
+module "naming_data" {
+  source = "github.com/Azure/terraform-azurerm-naming"
+  suffix = ["data"]
+}
+
 data "azurerm_resource_group" "core" {
   name = var.core_resource_group_name
 }
@@ -65,6 +70,34 @@ resource "azurerm_management_lock" "st_lock" {
   notes      = "Locked. This is a core component."
 }
 
+resource "azurerm_storage_account" "data" {
+  name                      = module.naming_data.storage_account.name_unique
+  resource_group_name       = azurerm_resource_group.funz.name
+  location                  = azurerm_resource_group.funz.location
+  account_kind              = "StorageV2"
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  access_tier               = "Hot"
+  min_tls_version           = "TLS1_2"
+  shared_access_key_enabled = true
+  blob_properties {
+    versioning_enabled = false
+  }
+}
+
+resource "azurerm_storage_container" "pipeline_updates" {
+  name                  = "pipeline-updates"
+  storage_account_name  = azurerm_storage_account.data.name
+  container_access_type = "private"
+}
+
+resource "azurerm_management_lock" "st_data_lock" {
+  name       = "resource-st-data-lock"
+  scope      = azurerm_storage_account.data.id
+  lock_level = "CanNotDelete"
+  notes      = "Locked. This is a core component."
+}
+
 resource "azurerm_function_app" "funz" {
   name                       = module.naming.function_app.name_unique
   location                   = local.location
@@ -78,9 +111,12 @@ resource "azurerm_function_app" "funz" {
     type = "SystemAssigned"
   }
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "dotnet",
-    CoreStorageAccount       = data.azurerm_storage_account.core.name
-    DevOpsPat                = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.dev_ops_pat_token.id})"
+    FUNCTIONS_WORKER_RUNTIME        = "dotnet",
+    WEBSITE_RUN_FROM_PACKAGE        = 1,
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE = "true",
+    DataStorage                     = azurerm_storage_account.data.primary_connection_string
+    # CoreStorageAccount       = data.azurerm_storage_account.core.name
+    DevOpsPat = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.dev_ops_pat_token.id})"
   }
   site_config {
     always_on     = false
