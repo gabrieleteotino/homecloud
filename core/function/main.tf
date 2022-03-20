@@ -85,12 +85,6 @@ resource "azurerm_storage_account" "data" {
   }
 }
 
-resource "azurerm_storage_container" "pipeline_updates" {
-  name                  = "pipeline-updates"
-  storage_account_name  = azurerm_storage_account.data.name
-  container_access_type = "private"
-}
-
 resource "azurerm_management_lock" "st_data_lock" {
   name       = "resource-st-data-lock"
   scope      = azurerm_storage_account.data.id
